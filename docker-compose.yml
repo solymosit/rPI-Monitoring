@@ -1,0 +1,17 @@
+services:
+  pi-monitor:
+    build: .
+    image: pimonitor:latest
+    container_name: pi-monitor
+    restart: unless-stopped
+    volumes:
+      - /etc/os-release:/etc/os-release:ro
+      - /etc/hostname:/etc/hostname:ro
+      - /proc:/proc:ro
+      - /sys:/sys:ro
+      - /var/run/wpa_supplicant:/var/run/wpa_supplicant:ro
+    devices:
+      - /dev/vcio:/dev/vcio
+    privileged: true
+    network_mode: "host"
+    uts: "host"

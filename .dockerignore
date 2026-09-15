@@ -1,0 +1,11 @@
+target/
+.git/
+node_modules/
+.dockerignore
+Dockerfile
+*.pyc
+__pycache__/
+app.py
+monitor.py
+requirements.txt
+templates/

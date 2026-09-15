@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pi-Monitor | Performance Dashboard</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.30/dist/uPlot.min.css">
+  <link href="/style.css" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.30/dist/uPlot.iife.min.js"></script>
+  <script src="/scripts.js" defer></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 id="hostName">Pi-Monitor</h1>
+          <p id="osName">Connecting...</p>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="info-item row">
+          <span class="info-label">System Status</span>
+          <div id="statusBadge" class="status-indicator">
+            <div class="status-dot"></div>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Uptime</span>
+          <span class="info-value" id="uptime">--</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Load Average</span>
+          <span class="info-value" id="loadAvg">--</span>
+        </div>
+
+        <div id="ethList">
+          <div class="info-item row">
+            <span class="info-label" id="ethLabel">Ethernet</span>
+            <div class="info-value" style="text-align: right;">
+              <div id="ethStatus">--</div>
+              <div id="ethSpeed" style="font-size: 0.8rem; color: var(--text-muted);">--</div>
+              <div id="ethIp" style="font-size: 0.8rem; color: var(--text-muted);">--</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-item row" id="wifiContainer" style="display: none;">
+          <span class="info-label" id="wifiLabel">Wi-Fi</span>
+          <div class="info-value" style="text-align: right;">
+            <div id="wifiStatus">--</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);"><span id="wifiSignal">--</span> | <span id="wifiFreq">--</span></div>
+            <div id="wifiSec" style="font-size: 0.8rem; color: var(--text-muted);">--</div>
+            <div id="wifiIp" style="font-size: 0.8rem; color: var(--text-muted);">--</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>CPU Usage</h2>
+            <span class="value text-green" id="cpuStat">--%</span>
+          </div>
+          <div class="card-icon"><i class="bi bi-cpu"></i></div>
+        </div>
+        <div id="cpuChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>Memory Usage</h2>
+            <span class="value text-orange" id="memStat">--%</span>
+          </div>
+          <div class="card-icon"><i class="bi bi-memory"></i></div>
+        </div>
+        <div id="memChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>CPU Temp</h2>
+            <span class="value text-red" id="tempStat">--°C</span>
+          </div>
+          <div class="card-icon"><i class="bi bi-thermometer-half"></i></div>
+        </div>
+        <div id="tempChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>GPU Frequency</h2>
+            <span class="value text-yellow" id="gpuFreqStat">-- MHz</span>
+          </div>
+          <div class="card-icon"><i class="bi bi-gpu-card"></i></div>
+        </div>
+        <div id="gpuFreqChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>Fan Speed</h2>
+            <span class="value text-teal" id="fanSpeedLabel">-- RPM</span>
+          </div>
+          <div class="card-icon"><i class="bi bi-fan"></i></div>
+        </div>
+        <div id="fanChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>CPU Frequency</h2>
+            <span class="value text-green" id="freqStat">-- MHz</span>
+          </div>
+          <div class="card-icon"><i class="bi bi-speedometer2"></i></div>
+        </div>
+        <div id="freqChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>Storage (Usage & I/O)</h2>
+            <div class="multi-values">
+              <span class="text-orange"><i class="bi bi-pie-chart-fill"></i> <span id="diskStat">--%</span></span>
+              <span class="text-teal"><i class="bi bi-arrow-down-circle-fill"></i> <span id="diskReadStat">--</span></span>
+              <span class="text-red"><i class="bi bi-arrow-up-circle-fill"></i> <span id="diskWriteStat">--</span></span>
+            </div>
+          </div>
+          <div class="card-icon"><i class="bi bi-hdd-fill"></i></div>
+        </div>
+        <div id="diskIOChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>Network Bandwidth (MB/s)</h2>
+            <div class="multi-values">
+              <span class="text-teal"><i class="bi bi-arrow-down-circle-fill"></i> <span id="netRecvStat">--</span></span>
+              <span class="text-yellow"><i class="bi bi-arrow-up-circle-fill"></i> <span id="netSentStat">--</span></span>
+            </div>
+          </div>
+          <div class="card-icon"><i class="bi bi-router-fill"></i></div>
+        </div>
+        <div id="netIOChart" class="chart-container"></div>
+      </div>
+
+      <div class="chart-card full-width">
+        <div class="card-header">
+          <div class="card-title">
+            <h2>Power Consumption (PMIC)</h2>
+            <span class="value text-green" id="totalPowerStat">-- W</span>
+          </div>
+          <div class="power-meta">
+            <div>Min: <span id="minPower">--</span> W</div>
+            <div>Max: <span id="maxPower">--</span> W</div>
+          </div>
+          <div class="card-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+        </div>
+        <div id="powerChart" class="chart-container power-container"></div>
+        <div class="power-breakdown-container">
+          <div class="breakdown-header">
+            <span class="breakdown-title">Power Rails Breakdown</span>
+          </div>
+          <div class="power-rails-grid" id="powerRailsGrid"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>
